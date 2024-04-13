@@ -13,9 +13,7 @@ export const ProductListItem = ({ product }: ProductListItemProps) => {
       <Pressable style={styles.container}>
         <Image
           source={{
-            uri:
-              product.image ||
-              "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png",
+            uri: product.image || defualtImage,
           }}
           style={styles.image}
           resizeMode="contain"
