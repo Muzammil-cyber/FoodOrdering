@@ -9,18 +9,19 @@ import { PizzaSize } from "../../../types";
 import products from "../../../../assets/data/products";
 import Colors from "@/constants/Colors";
 import Button from "@/components/Button";
+import { useCart } from "@/providers/CartProdiver";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const ProductDetailsScreen = () => {
   const { id } = useLocalSearchParams();
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
-
+  const { setCartItem } = useCart();
   const product = products.find((product) => product.id.toString() === id);
 
   const addToCart = () => {
     if (!product) return;
-    console.warn("Add to cart");
+    setCartItem(product, selectedSize);
   };
 
   return (
