@@ -1,18 +1,25 @@
 //import liraries
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Image } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@/components/Button";
 import defualtImage from "@/constants/Images";
 import Colors from "@/constants/Colors";
-import { Stack, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import products from "@assets/data/products";
 
 // create a component
 const CreateProductScreen = () => {
   const router = useRouter();
-  const [input, setInput] = useState({ name: "", price: "" });
+  const { id }: { id: string } = useLocalSearchParams();
+  const isUpdating = !!id;
+  const product = products.find((product) => product.id.toString() === id);
+  const [input, setInput] = useState<{ name: string; price: string }>({
+    name: product?.name || "",
+    price: product?.price.toString() || "",
+  });
   const [error, setError] = useState("");
-  const [image, setImage] = useState<string>(defualtImage);
+  const [image, setImage] = useState<string>(product?.image || defualtImage);
 
   const resetInput = () => {
     setInput({ name: "", price: "" });
@@ -32,12 +39,44 @@ const CreateProductScreen = () => {
     return true;
   };
 
-  const onCreate = () => {
+  const onSubmit = () => {
     if (!validateInput()) return;
-    console.warn("Create product");
-    // TODO: create product
+    if (isUpdating) {
+      onUpdate();
+    } else {
+      onCreate();
+    }
     resetInput();
     router.back();
+  };
+
+  const onDelete = () => {
+    console.warn("Delete dish");
+    // TODO: delete product
+  };
+
+  const confirmDelete = () => {
+    Alert.alert(
+      "Delete Dish",
+      "Are you sure you want to delete this product?",
+      [
+        {
+          text: "Cancel",
+          style: "default",
+        },
+        { text: "Delete", style: "destructive", onPress: onDelete },
+      ]
+    );
+  };
+
+  const onUpdate = () => {
+    console.warn("Update product");
+    // TODO: update product
+  };
+
+  const onCreate = () => {
+    console.warn("Create product");
+    // TODO: create product
   };
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -54,7 +93,9 @@ const CreateProductScreen = () => {
   };
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: "Create Dish" }} />
+      <Stack.Screen
+        options={{ title: isUpdating ? "Update Dish" : "Create Dish" }}
+      />
       <Image style={styles.image} source={{ uri: image }} />
       <Text style={styles.imgBtn} onPress={pickImage}>
         Add Image
@@ -75,7 +116,15 @@ const CreateProductScreen = () => {
         onChangeText={(price) => setInput({ ...input, price })}
       />
       <Text style={{ color: "red" }}>{error}</Text>
-      <Button onPress={onCreate} text={"Create Product"} />
+      <Button
+        onPress={onSubmit}
+        text={isUpdating ? "Update Dish" : "Create Product"}
+      />
+      {isUpdating && (
+        <Text style={styles.delBtn} onPress={confirmDelete}>
+          Delete Product
+        </Text>
+      )}
     </View>
   );
 };
@@ -105,6 +154,13 @@ const styles = StyleSheet.create({
   },
   imgBtn: {
     color: Colors.light.tint,
+    alignSelf: "center",
+    fontWeight: "bold",
+    marginVertical: 10,
+    fontSize: 16,
+  },
+  delBtn: {
+    color: "red",
     alignSelf: "center",
     fontWeight: "bold",
     marginVertical: 10,
