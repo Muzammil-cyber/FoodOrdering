@@ -3,6 +3,9 @@ import { Order } from "@/types";
 import { Link, useSegments } from "expo-router";
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 type OrderListItemProps = {
   order: Order;
@@ -16,7 +19,7 @@ const OrderListItem = ({ order }: OrderListItemProps) => {
       <Pressable style={styles.container}>
         <View>
           <Text style={styles.title}>Order #{order.id}</Text>
-          <Text style={styles.time}>{order.created_at}</Text>
+          <Text style={styles.time}>{dayjs(order.created_at).fromNow()}</Text>
         </View>
 
         <Text style={styles.status}>{order.status}</Text>
