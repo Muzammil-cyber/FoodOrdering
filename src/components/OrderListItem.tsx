@@ -14,15 +14,19 @@ type OrderListItemProps = {
 // create a component
 const OrderListItem = ({ order }: OrderListItemProps) => {
   const segments: string[] = useSegments();
+  const firstSegment = segments[0] === "(admin)" ? "admin" : "user";
+  const statusColor = order.status === "Delivered" ? "green" : "orange";
   return (
-    <Link href={`/${segments[0]}/order/${order.id}`} asChild>
+    <Link href={`/(${firstSegment})/order/${order.id}`} asChild>
       <Pressable style={styles.container}>
         <View>
           <Text style={styles.title}>Order #{order.id}</Text>
           <Text style={styles.time}>{dayjs(order.created_at).fromNow()}</Text>
         </View>
 
-        <Text style={styles.status}>{order.status}</Text>
+        <Text style={{ ...styles.status, color: statusColor }}>
+          {order.status}
+        </Text>
       </Pressable>
     </Link>
   );
