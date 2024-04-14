@@ -12,6 +12,12 @@ const index = () => {
       <Link href={"/(admin)"} asChild>
         <Button text="Admin" />
       </Link>
+      <Link href={"/sign-in"} asChild>
+        <Button text="Sign in" />
+      </Link>
+      <Link href={"/sign-up"} asChild>
+        <Button text="Sign Up" />
+      </Link>
     </View>
   );
 };

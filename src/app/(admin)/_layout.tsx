@@ -55,7 +55,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="order"
         options={{
           title: "Orders",
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,

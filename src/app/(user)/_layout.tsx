@@ -37,7 +37,7 @@ export default function TabLayout() {
             <TabBarIcon name="cutlery" color={color} />
           ),
           headerRight: () => (
-            <Link href={"/modal"} asChild>
+            <Link href={"/cart"} asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
@@ -53,10 +53,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="order"
         options={{
           title: "Orders",
-          tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
         }}
       />
     </Tabs>
