@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
 import { Stack, useLocalSearchParams } from "expo-router";
 
@@ -10,19 +17,30 @@ import products from "../../../../assets/data/products";
 import Colors from "@/constants/Colors";
 import Button from "@/components/Button";
 import { useCart } from "@/providers/CartProdiver";
+import defualtImage from "@/constants/Images";
+import { useProduct } from "@/api/products";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
 const ProductDetailsScreen = () => {
-  const { id } = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
   const { setCartItem } = useCart();
-  const product = products.find((product) => product.id.toString() === id);
+  const { data: product, isLoading, error } = useProduct(id);
 
   const addToCart = () => {
     if (!product) return;
     setCartItem(product, selectedSize);
   };
+
+  if (isLoading) {
+    return <ActivityIndicator size={"large"} />;
+  }
+
+  if (error) {
+    return <Text>Failed to Fetch products</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -58,7 +76,7 @@ const ProductDetailsScreen = () => {
           </Pressable>
         ))}
       </View>
-      <Text style={styles.price}>Price: ${product?.price.toFixed(2)}</Text>
+      <Text style={styles.price}>Price: PKR{product?.price.toFixed(2)}</Text>
       <Button onPress={addToCart} text="Add to cart" />
     </View>
   );

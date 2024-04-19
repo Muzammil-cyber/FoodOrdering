@@ -1,6 +1,11 @@
-import { Stack } from "expo-router";
+import { useAuth } from "@/providers/AuthProvider";
+import { Redirect, Stack } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 const AuthLayout = () => {
+  const { session } = useAuth();
+  if (session) {
+    return <Redirect href="/" />;
+  }
   return (
     <Stack>
       <Stack.Screen name="sign-in" options={{ title: "Sign In" }} />

@@ -1,8 +1,8 @@
 import OrderListItem from "@/components/OrderListItem";
 
 import orders from "@assets/data/orders";
-import { Stack } from "expo-router";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+
+import { FlatList } from "react-native";
 
 const OrderScreen = () => {
   return (

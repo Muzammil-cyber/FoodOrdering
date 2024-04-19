@@ -1,9 +1,10 @@
 //import liraries
 import Button from "@/components/Button";
 import Colors from "@/constants/Colors";
+import supabase from "@/lib/superbase";
 import { Link } from "expo-router";
 import React, { Component, useState } from "react";
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, Alert } from "react-native";
 
 // create a component
 const SignInScreen = () => {
@@ -11,33 +12,21 @@ const SignInScreen = () => {
     email: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const validateInput = () => {
-    setError("");
-    if (!input.email || !input.password) {
-      setError("Please fill in all fields");
-      return false;
-    }
-    // Check email format
-    if (
-      !input.email.includes("@") ||
-      !input.email.includes(".") ||
-      input.email.length < 5
-    ) {
-      setError("Please enter a valid email");
-      return false;
-    }
-    if (input.password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return false;
-    }
-    return true;
-  };
+  async function signInWithEmail() {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: input.email,
+      password: input.password,
+    });
 
-  const onSubmit = () => {
-    if (!validateInput()) return;
-    console.warn("Sign in");
+    if (error) Alert.alert(error.message);
+    setLoading(false);
+  }
+
+  const onSubmit = async () => {
+    await signInWithEmail();
   };
   return (
     <View style={styles.container}>
@@ -59,8 +48,12 @@ const SignInScreen = () => {
         value={input.password}
         secureTextEntry
       />
-      <Text style={{ color: "red" }}>{error}</Text>
-      <Button onPress={onSubmit} text="Sign In" />
+
+      <Button
+        onPress={onSubmit}
+        text={loading ? "Signing in..." : "Sign in"}
+        disabled={loading}
+      />
       <Link href={"/(auth)/sign-up"} style={styles.textButton}>
         Create an Account
       </Link>

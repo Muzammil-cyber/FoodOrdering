@@ -14,7 +14,7 @@ const cart = () => {
         contentContainerStyle={{ gap: 10 }}
       />
       <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 5 }}>
-        Total: ${total}
+        Total: PKR {total}
       </Text>
       <Button text="CheckOut" />
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />

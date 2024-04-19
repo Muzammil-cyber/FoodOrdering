@@ -1,10 +1,11 @@
 import { Image, StyleSheet, Text, Pressable } from "react-native";
 import Colors from "../constants/Colors";
-import { Product } from "../types";
+import { Tables } from "../types";
 import { Link, useSegments } from "expo-router";
+import defualtImage from "@/constants/Images";
 
 type ProductListItemProps = {
-  product: Product;
+  product: Tables<"products">;
 };
 
 export const ProductListItem = ({ product }: ProductListItemProps) => {
@@ -20,7 +21,7 @@ export const ProductListItem = ({ product }: ProductListItemProps) => {
           resizeMode="contain"
         />
         <Text style={styles.title}>{product.name}</Text>
-        <Text style={styles.price}>${product.price}</Text>
+        <Text style={styles.price}>PKR{product.price}</Text>
       </Pressable>
     </Link>
   );

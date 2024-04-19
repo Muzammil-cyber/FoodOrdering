@@ -1,19 +1,43 @@
 //import liraries
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@/components/Button";
 import defualtImage from "@/constants/Images";
 import Colors from "@/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import products from "@assets/data/products";
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useProduct,
+  useUpdateProduct,
+} from "@/api/products";
 
 // create a component
 const CreateProductScreen = () => {
   const router = useRouter();
   const { id }: { id: string } = useLocalSearchParams();
   const isUpdating = !!id;
-  const product = products.find((product) => product.id.toString() === id);
+
+  const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  const {
+    data: product,
+    error: invalidProduct,
+    isLoading,
+  } = useProduct(parseInt(id));
+
   const [input, setInput] = useState<{ name: string; price: string }>({
     name: product?.name || "",
     price: product?.price.toString() || "",
@@ -46,13 +70,15 @@ const CreateProductScreen = () => {
     } else {
       onCreate();
     }
-    resetInput();
-    router.back();
   };
 
   const onDelete = () => {
-    console.warn("Delete dish");
-    // TODO: delete product
+    deleteProduct(parseInt(id), {
+      onSuccess: () => {
+        resetInput();
+        router.replace("/(admin)/menu");
+      },
+    });
   };
 
   const confirmDelete = () => {
@@ -70,13 +96,38 @@ const CreateProductScreen = () => {
   };
 
   const onUpdate = () => {
-    console.warn("Update product");
     // TODO: update product
+    updateProduct(
+      {
+        id: parseInt(id),
+        name: input.name,
+        price: parseFloat(input.price),
+        image,
+      },
+      {
+        onSuccess: () => {
+          resetInput();
+          router.back();
+        },
+      }
+    );
   };
 
   const onCreate = () => {
-    console.warn("Create product");
     // TODO: create product
+    insertProduct(
+      {
+        name: input.name,
+        price: parseFloat(input.price),
+        image,
+      },
+      {
+        onSuccess: () => {
+          resetInput();
+          router.back();
+        },
+      }
+    );
   };
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -91,6 +142,15 @@ const CreateProductScreen = () => {
       setImage(result.assets[0].uri);
     }
   };
+
+  if (isLoading) {
+    return <ActivityIndicator size={"large"} />;
+  }
+
+  if (invalidProduct) {
+    return <Text>Failed to Fetch product</Text>;
+  }
+
   return (
     <View style={styles.container}>
       <Stack.Screen
