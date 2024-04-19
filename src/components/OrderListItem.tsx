@@ -1,5 +1,5 @@
 //import liraries
-import { Order } from "@/types";
+import { Order, Tables } from "@/types";
 import { Link, useSegments } from "expo-router";
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
@@ -8,14 +8,17 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 type OrderListItemProps = {
-  order: Order;
+  order: Omit<Order, "order_items">;
 };
 
 // create a component
 const OrderListItem = ({ order }: OrderListItemProps) => {
   const segments: string[] = useSegments();
   const firstSegment = segments[0] === "(admin)" ? "admin" : "user";
-  const statusColor = order.status === "Delivered" ? "green" : "orange";
+  const statusColor =
+    order.status === "Delivered" || order.status === "Delivering"
+      ? "green"
+      : "orange";
   return (
     <Link href={`/(${firstSegment})/order/${order.id}`} asChild>
       <Pressable style={styles.container}>

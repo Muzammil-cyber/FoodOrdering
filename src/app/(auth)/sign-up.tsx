@@ -1,7 +1,7 @@
 //import liraries
 import Button from "@/components/Button";
 import Colors from "@/constants/Colors";
-import supabase from "@/lib/superbase";
+import supabase from "@/lib/supabase";
 
 import { Link } from "expo-router";
 import React, { Component, useState } from "react";

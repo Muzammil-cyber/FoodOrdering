@@ -3,7 +3,7 @@ import React from "react";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
-import supabase from "@/lib/superbase";
+import supabase from "@/lib/supabase";
 
 const index = () => {
   const { session, loading, isAdmin } = useAuth();

@@ -1,10 +1,13 @@
+import { useMyOrders } from "@/api/orders";
 import OrderListItem from "@/components/OrderListItem";
-import Colors from "@/constants/Colors";
-import orders from "@assets/data/orders";
+
 import { Stack } from "expo-router";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, Text } from "react-native";
 
 const OrderScreen = () => {
+  const { data: orders, error, isLoading } = useMyOrders();
+  if (isLoading) return <ActivityIndicator />;
+  if (error) return <Text>Error fetching Orders</Text>;
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />

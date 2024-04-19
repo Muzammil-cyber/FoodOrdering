@@ -1,4 +1,4 @@
-import supabase from "@/lib/superbase";
+import supabase from "@/lib/supabase";
 import { Session } from "@supabase/auth-js";
 import {
   PropsWithChildren,
@@ -8,40 +8,46 @@ import {
   useState,
 } from "react";
 
-type AuthContextType = {
+type AuthData = {
   session: Session | null;
+  profile: any;
   loading: boolean;
   isAdmin: boolean;
 };
 
-const AuthContext = createContext<AuthContextType>({
+const AuthContext = createContext<AuthData>({
   session: null,
   loading: true,
+  profile: null,
   isAdmin: false,
 });
 
 export default function AuthProvider({ children }: PropsWithChildren) {
-  const [session, setSession] = useState<null | Session>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>();
 
   useEffect(() => {
     const fetchSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      if (data.session) {
+      setSession(session);
+
+      if (session) {
         // fetch profile
-        const { data: fetch } = await supabase
+        const { data } = await supabase
           .from("profiles")
           .select("*")
-          .eq("id", data.session.user.id)
+          .eq("id", session.user.id)
           .single();
-
-        setProfile(fetch);
+        setProfile(data || null);
       }
+
       setLoading(false);
     };
+
     fetchSession();
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
@@ -50,7 +56,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
   return (
     <AuthContext.Provider
-      value={{ session, loading, isAdmin: profile?.group === "ADMIN" }}
+      value={{ session, loading, profile, isAdmin: profile?.group === "ADMIN" }}
     >
       {children}
     </AuthContext.Provider>

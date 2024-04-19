@@ -1,10 +1,18 @@
+import { useOrderList } from "@/api/orders";
+import { useInsertOrderSubscription } from "@/api/orders/subcription";
 import OrderListItem from "@/components/OrderListItem";
 
 import orders from "@assets/data/orders";
 
-import { FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Text } from "react-native";
 
 const OrderScreen = () => {
+  const { data: orders, error, isLoading } = useOrderList({ archived: true });
+
+  useInsertOrderSubscription();
+
+  if (isLoading) return <ActivityIndicator />;
+  if (error) return <Text>Error: {error.message}</Text>;
   return (
     <>
       <FlatList
