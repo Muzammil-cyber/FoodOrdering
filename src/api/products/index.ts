@@ -65,7 +65,7 @@ export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        async mutationFn({ id, ...update }: Product) {
+        async mutationFn({ id, ...update }: Omit<Product, 'created_at'>) {
             const { data, error } = await supabase
                 .from('products')
                 .update(update)

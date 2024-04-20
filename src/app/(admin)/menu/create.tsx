@@ -5,7 +5,6 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  Image,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -14,13 +13,18 @@ import Button from "@/components/Button";
 import defualtImage from "@/constants/Images";
 import Colors from "@/constants/Colors";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
-import products from "@assets/data/products";
+
 import {
   useDeleteProduct,
   useInsertProduct,
   useProduct,
   useUpdateProduct,
 } from "@/api/products";
+import { randomUUID } from "expo-crypto";
+import supabase from "@/lib/supabase";
+import { decode } from "base64-arraybuffer";
+import * as FileSystem from "expo-file-system";
+import RemoteImage from "@/lib/RemoteImage";
 
 // create a component
 const CreateProductScreen = () => {
@@ -36,14 +40,17 @@ const CreateProductScreen = () => {
     data: product,
     error: invalidProduct,
     isLoading,
-  } = useProduct(parseInt(id));
+  } = isUpdating
+    ? useProduct(parseInt(id))
+    : { data: undefined, error: undefined, isLoading: false };
 
   const [input, setInput] = useState<{ name: string; price: string }>({
     name: product?.name || "",
     price: product?.price.toString() || "",
   });
   const [error, setError] = useState("");
-  const [image, setImage] = useState<string>(product?.image || defualtImage);
+  const [image, setImage] = useState<string>(product?.image || "");
+  const [loading, setLoading] = useState(false);
 
   const resetInput = () => {
     setInput({ name: "", price: "" });
@@ -64,12 +71,14 @@ const CreateProductScreen = () => {
   };
 
   const onSubmit = () => {
+    setLoading(true);
     if (!validateInput()) return;
     if (isUpdating) {
       onUpdate();
     } else {
       onCreate();
     }
+    setLoading(false);
   };
 
   const onDelete = () => {
@@ -113,13 +122,14 @@ const CreateProductScreen = () => {
     );
   };
 
-  const onCreate = () => {
+  const onCreate = async () => {
     // TODO: create product
+    const imagePath = await uploadImage();
     insertProduct(
       {
         name: input.name,
         price: parseFloat(input.price),
-        image,
+        image: imagePath,
       },
       {
         onSuccess: () => {
@@ -143,12 +153,31 @@ const CreateProductScreen = () => {
     }
   };
 
+  const uploadImage = async () => {
+    if (!image?.startsWith("file://")) {
+      return;
+    }
+
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: "base64",
+    });
+    const filePath = `${randomUUID()}.png`;
+    const contentType = "image/png";
+    const { data, error } = await supabase.storage
+      .from("product-images")
+      .upload(filePath, decode(base64), { contentType });
+
+    if (data) {
+      return data.path;
+    }
+  };
+
   if (isLoading) {
     return <ActivityIndicator size={"large"} />;
   }
 
   if (invalidProduct) {
-    return <Text>Failed to Fetch product</Text>;
+    return <Text>Failed to Fetch product: {invalidProduct.message}</Text>;
   }
 
   return (
@@ -156,7 +185,7 @@ const CreateProductScreen = () => {
       <Stack.Screen
         options={{ title: isUpdating ? "Update Dish" : "Create Dish" }}
       />
-      <Image style={styles.image} source={{ uri: image }} />
+      <RemoteImage style={styles.image} path={image} fallback={defualtImage} />
       <Text style={styles.imgBtn} onPress={pickImage}>
         Add Image
       </Text>
@@ -179,6 +208,7 @@ const CreateProductScreen = () => {
       <Button
         onPress={onSubmit}
         text={isUpdating ? "Update Dish" : "Create Product"}
+        disabled={loading || !input.name || !input.price || !image}
       />
       {isUpdating && (
         <Text style={styles.delBtn} onPress={confirmDelete}>

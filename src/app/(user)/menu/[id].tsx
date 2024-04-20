@@ -19,6 +19,7 @@ import Button from "@/components/Button";
 import { useCart } from "@/providers/CartProdiver";
 import defualtImage from "@/constants/Images";
 import { useProduct } from "@/api/products";
+import RemoteImage from "@/lib/RemoteImage";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 
@@ -45,8 +46,9 @@ const ProductDetailsScreen = () => {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ title: product?.name }} />
-      <Image
-        source={{ uri: product?.image || defualtImage }}
+      <RemoteImage
+        path={product?.image}
+        fallback={defualtImage}
         style={styles.image}
         resizeMode="contain"
       />
