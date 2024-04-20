@@ -53,8 +53,8 @@ class LargeSecureStore {
     }
 }
 
-const supabaseUrl = 'https://islqcuowyfsvpuhpitrm.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzbHFjdW93eWZzdnB1aHBpdHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTMwMTIyOTgsImV4cCI6MjAyODU4ODI5OH0.VPHrbQDHFsZp05w4i5RdSUjvwHBubd0UoEuOh_lNtKU';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
 const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
