@@ -10,7 +10,7 @@ const OrderScreen = () => {
   if (error) return <Text>Error fetching Orders</Text>;
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen options={{ title: "Orders", headerShown: true }} />
       <FlatList
         data={orders}
         renderItem={({ item }) => <OrderListItem order={item} />}

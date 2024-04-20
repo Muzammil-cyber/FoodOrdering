@@ -104,14 +104,17 @@ const CreateProductScreen = () => {
     );
   };
 
-  const onUpdate = () => {
-    // TODO: update product
+  const onUpdate = async () => {
+    if (!validateInput()) {
+      return;
+    }
+    const imagePath = await uploadImage();
     updateProduct(
       {
         id: parseInt(id),
         name: input.name,
         price: parseFloat(input.price),
-        image,
+        image: imagePath || null,
       },
       {
         onSuccess: () => {

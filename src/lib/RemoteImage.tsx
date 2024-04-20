@@ -11,7 +11,12 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
   const [image, setImage] = useState("");
 
   useEffect(() => {
-    if (!path) return;
+    if (!path || path === fallback) return;
+    if (path.startsWith("file:/")) {
+      setImage(path);
+      return;
+    }
+
     (async () => {
       setImage("");
       const { data, error } = await supabase.storage
@@ -19,7 +24,7 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
         .download(path);
 
       if (error) {
-        console.log(error);
+        console.log("Error in RemoteImage", error);
       }
 
       if (data) {

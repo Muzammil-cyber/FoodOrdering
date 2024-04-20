@@ -7,6 +7,7 @@ import Colors from "../../constants/Colors";
 import { useColorScheme } from "../../components/useColorScheme";
 import { useClientOnlyValue } from "../../components/useClientOnlyValue";
 import { useAuth } from "@/providers/AuthProvider";
+import { color } from "react-native-elements/dist/helpers";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -62,7 +63,15 @@ export default function TabLayout() {
         name="order"
         options={{
           title: "Orders",
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
     </Tabs>
