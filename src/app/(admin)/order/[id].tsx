@@ -14,6 +14,7 @@ import Colors from "@/constants/Colors";
 import { OrderStatus, OrderStatusList } from "@/types";
 import { useOrderDetails, useUpdateOrder } from "@/api/orders";
 import { useUpdateOrderSubscription } from "@/api/orders/subcription";
+import { notifyUserAboutOrderUpdate } from "@/lib/notifications";
 
 const OrderDetailScreen = () => {
   const { id: idString } = useLocalSearchParams();
@@ -24,8 +25,16 @@ const OrderDetailScreen = () => {
 
   useUpdateOrderSubscription(id);
 
-  const updateStatus = (status: OrderStatus) => {
-    updateOrder({ status });
+  const updateStatus = async (status: OrderStatus) => {
+    updateOrder(
+      { status },
+      {
+        onSuccess: async () => {
+          if (order) await notifyUserAboutOrderUpdate({ ...order, status });
+        },
+      }
+    );
+    // if (order) await notifyUserAboutOrderUpdate(order);
   };
 
   if (isLoading) return <ActivityIndicator />;
