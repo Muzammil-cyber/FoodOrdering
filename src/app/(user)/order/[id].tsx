@@ -36,7 +36,7 @@ const OrderDetailScreen = () => {
       />
       <View style={styles.priceContainer}>
         <Text style={styles.priceTitle}>Total:</Text>
-        <Text style={styles.price}>PKR {order.total}</Text>
+        <Text style={styles.price}>$ {order.total}</Text>
       </View>
     </View>
   );

@@ -64,7 +64,7 @@ const ProductDetailsScreen = () => {
         resizeMode="contain"
       />
       <Text style={styles.title}>{product?.name}</Text>
-      <Text style={styles.price}>Price: PKR {product?.price.toFixed(2)}</Text>
+      <Text style={styles.price}>Price: $ {product?.price.toFixed(2)}</Text>
     </View>
   );
 };

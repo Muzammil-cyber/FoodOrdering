@@ -26,9 +26,7 @@ const CartListItem = ({ cartItem }: CartListItemProps) => {
       <View style={{ flex: 1 }}>
         <Text style={styles.title}>{cartItem.product.name}</Text>
         <View style={styles.subtitleContainer}>
-          <Text style={styles.price}>
-            PKR{cartItem.product.price.toFixed(2)}
-          </Text>
+          <Text style={styles.price}>${cartItem.product.price.toFixed(2)}</Text>
           <Text>Size: {cartItem.size}</Text>
         </View>
       </View>

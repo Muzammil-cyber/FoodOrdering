@@ -78,7 +78,7 @@ const ProductDetailsScreen = () => {
           </Pressable>
         ))}
       </View>
-      <Text style={styles.price}>Price: PKR{product?.price.toFixed(2)}</Text>
+      <Text style={styles.price}>Price: ${product?.price.toFixed(2)}</Text>
       <Button onPress={addToCart} text="Add to cart" />
     </View>
   );
